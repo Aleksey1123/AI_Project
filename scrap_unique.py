@@ -6,7 +6,8 @@ import re
 
 dt = {} # уникальные слова из каждой статьи
 un_words = dict() # слова, которые записываются в csv-файл
-# count = 0
+count = 0
+k = 0
 
 
 def isPreposition_or_Conjuction(text):  # функция, которая проверяет, не является ли слово предлогом/союзом
@@ -21,16 +22,11 @@ def isPreposition_or_Conjuction(text):  # функция, которая про�
 
 
 def clearPunctuationMark(text):  # функция, которая очищает входной параметр от зноков пунктуации
-    marks = [',', '.', ':', ';', '?', '«', '»', '(', ')', '!', '\"', '“', '”', '—', '-', '+']
-    new_word = text
-    if new_word[len(new_word) - 2] in marks:
-        new_word = new_word[0:len(new_word) - 2]
-    elif new_word[len(new_word) - 1] in marks:
-        new_word = new_word[0:len(new_word) - 1]
-    if len(new_word) > 1 and new_word[0] in marks:
-        new_word = new_word[1:len(new_word)]
-    return new_word
+    # marks = [',', '.', ':', ';', '?', '«', '»', '(', ')', '!', '\"', '“', '”', '—', '-', '+', '/', '–', '​', '„',
+             # '“', '…', '№', '­']
 
+    n_word = re.sub('[,|.|:|;|?|«|»|(|)|!|"|“|”|—|-|+|/|–|​|„|“|…|№|­]', "", text)
+    return n_word
 
 def match(text, alphabet=set('абвгдеёжзийклмнопрстуфхцчшщъыьэюя')):
     return not alphabet.isdisjoint(text.lower())
@@ -39,8 +35,10 @@ def match(text, alphabet=set('абвгдеёжзийклмнопрстуфхцч
 if __name__ == '__main__':
     with open('stat.csv', encoding='utf-8', newline='') as csvfile:  # открываем файл, в котором ссылки на статьи,
         # включающие слова-токены
-        reader = csv.reader(csvfile)
+        reader = csv.reader(csvfile) # читаем csv-файл
         for row in reader:
+            if count == 10:
+                break
             # try:
             if row == ['', 'Links', 'Words']:  # первую строчку пропускаем, чтобы не мешала парсить
                 continue
@@ -68,17 +66,21 @@ if __name__ == '__main__':
                         break
                     else:
                         new_word = clearPunctuationMark(key)  # очищаем key от знаков препинания и записываем в new_word
-                        if not isPreposition_or_Conjuction(new_word) and len(new_word) > 2:  # проверяем, является
+                        if not isPreposition_or_Conjuction(new_word) and len(new_word) > 3:  # проверяем, является
                             # ли слово предлогом/союзом, а также смотрим на его длину
+                            k = 0
                             for char in new_word:
-                                if match(text=new_word):  # только слова, состоящие из кириллицы, записываем в словарь
+                                if match(text=char):  # только слова, состоящие из кириллицы, записываем в словарь
                                     # un_words
-                                    if new_word in un_words.keys():  # и также добавляем в словарь un_words все слова
-                                        un_words[new_word] += 1
-                                    else:
-                                        un_words[new_word] = 1
+                                    k += 1
+                            if k == len(new_word):
+                                if new_word in un_words.keys():  # и также добавляем в словарь un_words все слова
+                                    un_words[new_word] += 1
+                                else:
+                                    un_words[new_word] = 1
 
                 # print(un_words)
+                # count += 1
                 dt.clear()  # очищаем наш словарь dt при переходе на новую строку в csv файле
                 # print(dt)
 
