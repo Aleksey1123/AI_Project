@@ -59,28 +59,28 @@ if __name__ == '__main__':
                     else:
                         dt[article_elem] = 1
 
-                print(dt)
+                # print(dt)
 
-                # sorted_dict = dict(sorted(dt.items(), key=lambda elem: elem[1]))  # нужно оставить только уникальные
-                # # слова, предварительно сортируем словарь
-                # for key in sorted_dict.keys():  # теперь key - это наше уникальное слово
-                #     if sorted_dict.get(key) > 1:
-                #         break
-                #     else:
-                #         new_word = clearPunctuationMark(key)  # очищаем key от знаков препинания и записываем в new_word
-                #         if not isPreposition_or_Conjuction(new_word) and len(new_word) > 2:  # проверяем, является
-                #             # ли слово предлогом/союзом, а также смотрим на его длину
-                #             for char in new_word:
-                #                 if match(text=new_word):  # только слова, состоящие из кириллицы, записываем в словарь
-                #                     # un_words
-                #                     if new_word in un_words.keys():  # и также добавляем в словарь un_words все слова
-                #                         un_words[new_word] += 1
-                #                     else:
-                #                         un_words[new_word] = 1
+                sorted_dict = dict(sorted(dt.items(), key=lambda elem: elem[1]))  # нужно оставить только уникальные
+                # слова, предварительно сортируем словарь
+                for key in sorted_dict.keys():  # теперь key - это наше уникальное слово
+                    if sorted_dict.get(key) > 1:
+                        break
+                    else:
+                        new_word = clearPunctuationMark(key)  # очищаем key от знаков препинания и записываем в new_word
+                        if not isPreposition_or_Conjuction(new_word) and len(new_word) > 2:  # проверяем, является
+                            # ли слово предлогом/союзом, а также смотрим на его длину
+                            for char in new_word:
+                                if match(text=new_word):  # только слова, состоящие из кириллицы, записываем в словарь
+                                    # un_words
+                                    if new_word in un_words.keys():  # и также добавляем в словарь un_words все слова
+                                        un_words[new_word] += 1
+                                    else:
+                                        un_words[new_word] = 1
 
                 # print(un_words)
                 dt.clear()  # очищаем наш словарь dt при переходе на новую строку в csv файле
-                print(dt)
+                # print(dt)
 
     frame = {'Words': pd.Series(un_words.keys()), 'Frequency': pd.Series(un_words.values())}
     df = pd.DataFrame(frame)
